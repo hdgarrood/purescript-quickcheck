@@ -166,7 +166,11 @@ sample :: forall r a. Seed -> Int -> Gen a -> Array a
 sample seed n g = evalGen sampleGen { newSeed: seed, size: 0 }
   where
   sampleGen = traverse (flip resize g) sizes
-  sizes = range 0 (n - 1) <#> (*2)
+  sizes = range 0 (n - 1) <#> f
+    where
+    f 0 = 2
+    f n | n >= 20 = 20
+    f n = n + 1
 
 -- | Sample a random generator, using a randomly generated seed
 randomSample' :: forall r a. Size -> Gen a -> Eff (random :: RANDOM | r) (Array a)
